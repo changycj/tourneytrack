@@ -1,0 +1,101 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+input {
+  padding: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.overlay{
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0,0,0,.8); /* dim the background*/
+}
+
+.modal {
+    width: 500px;
+    height: 300px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    overflow:auto;
+  
+    /*
+    Nope =(
+    margin-left: -25%;
+    margin-top: -25%;
+    */
+
+    /* 
+    Yep!
+    */
+    transform: translate(-50%, -50%);
+    background-color: #cec3c3;
+    display: block;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 11; /* 1px higher than the overlay layer */
+}
+
+.animate.ng-enter, 
+.animate.ng-leave
+{ 
+    -webkit-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -moz-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -ms-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -o-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    position: relative;
+    display: block;
+} 
+ 
+.animate.ng-enter.ng-enter-active, 
+.animate.ng-leave {
+    opacity: 1;
+    top: 0;
+    height: 30px;
+}
+ 
+.animate.ng-leave.ng-leave-active,
+.animate.ng-enter {
+    opacity: 0;
+    top: -10px;
+    height: 0px;
+}
+
+.create-tournament {
+    float: right;
+    margin: 0 10px 0 0;
+}
+
+.tournament-name {
+    font-weight: bold;
+}
+
+.tournament-description {
+    margin: 5px;
+    color: #303030;
+}
+
+.sub-text {
+    color: #303030;
+}
+.participating-teams {
+    font-weight: bold;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#edit-tournament-wrapper{
+	float: right;
+}

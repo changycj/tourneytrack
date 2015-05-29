@@ -1,0 +1,15 @@
+﻿<section>
+    <div data-ng-include data-src="'angularviews/navbar.html'"></div>
+    <h3>New Team</h3>
+    Name: <input ng-model="teamName" placeholder="Team Name"/><br />
+    Team Members
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="member in members">
+            {{member}} <button class="glyphicon glyphicon-remove" ng-click="removeUser(member)"></button>
+        </li>
+        <li class="list-group-item">
+            <input ng-model="newMember" placeholder="Member Username" /> <button class="glyphicon glyphicon-plus" ng-click="addUser(newMember)"></button>
+        </li>
+    </ul>
+    <button class="btn btn-default" ng-click="addTeam(team, members)">Create</button>
+</section>

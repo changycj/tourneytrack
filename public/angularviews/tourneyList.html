@@ -1,0 +1,63 @@
+<section>
+    <div data-ng-include data-src="'angularviews/navbar.html'"></div>
+    <h3>Tournaments</h3>
+    <button class="btn btn-default create-tournament" ng-click="displayNewTourneyModal()" ng-hide="!user">Create New Tourney</button>
+    <label for="search">Search: </label><input id="search" ng-model="searchText">
+    <div class="list-group animate" ng-repeat="tournament in tournaments | filter:{name:searchText} | orderBy: 'name'">
+        <a href='#/tourney/{{tournament._id}}' class="list-group-item">
+            <b>{{tournament.name}}</b>
+            <span style="background-color:green;" ng-if="tournament.started" class="badge">Started</span>
+            <span style="background-color:red;" ng-if="!tournament.started" class="badge">Not Started</span>
+        </a>
+    </div>
+
+    <div class="overlay" ng-show="showModal">
+        <center class="modal">
+            <h2>New Tournament</h2>
+            <div class="row">
+                <div class="col-md-1 col-xs-1"></div>
+                <div class="col-md-4 col-xs-4">
+                    <label class="pull-left" for="tname">Name:</label>
+                </div>
+                <input class="col-md-6 col-xs-6" id="tname" ng-model="tourney_name" placeholder="Tournament Name" />
+                <div class="col-md-1 col-xs-1"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-1 col-xs-1"></div>
+                <div class="col-md-4 col-xs-4">
+                    <label class="pull-left" for="desc">Tourney Info:</label>
+                </div>
+                <textarea class="col-md-6 col-xs-6" id="desc" ng-model="description" placeholder="Enter description here."></textarea>
+                <div class="col-md-1 col-xs-1"></div>    
+            </div>
+            <h4>Recorded Stats:</h4>
+            <div class="row">
+                <div class="col-md-5 col-xs-5">
+                    <span class="pull-right">Score</span>
+                </div>
+                <div class="col-md-6 col-xs-6">
+                    <span class="pull-left"><input type='checkbox' checked disabled>Team-Specific</span>
+                </div>
+            </div>
+            <div class="row" ng-repeat="field in statfields">
+                <div class="col-md-5 col-xs-5">
+                    <span class="pull-right">{{field.name}}</span>
+                </div>
+                <div class="col-md-6 col-xs-6">
+                    <span class="pull-left">
+                        <input type='checkbox' ng-model='field.teamSpecific' disabled>Team-Specific
+                        <button class="glyphicon glyphicon-remove" ng-click="removeField($index)"></button>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <label>New Stat:</label><input ng-model="newField.name"/>
+                <input id="teamspeccheck" ng-model="newField.teamSpecific" type="checkbox"><label for="teamspeccheck">Team-Specific</label>
+                <button ng-click="addField()">Add</button>
+            </div>
+            <button class="btn btn-default" ng-click="createTournament(tourney_name, description, statfields)">Create Tournament</button>
+            <button class="btn btn-default" ng-click="displayNewTourneyModal()">Cancel</button>
+            <span class="error">{{message}}</span>
+        </center>
+    </div>
+</section>

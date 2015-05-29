@@ -1,0 +1,206 @@
+<section>
+  <div data-ng-include data-src="'angularviews/navbar.html'"></div>
+  <span class='error'>{{error}}</span>
+  <div ng-show='error == undefined'>
+    <h1>Match Overview</h1>
+    <h4>Tournament: <a href='/#/tourney/{{tournament._id}}'>{{tournament.name}}</a></h4>
+    <h3><span ng-if='match.participants[1] || !match.outcome.winner'>
+      <a href='/#/team/{{match.participants[0]._id}}'>{{match.participants[0].name}}</a> vs <a href='/#/team/{{match.participants[1]._id}}'>{{match.participants[1].name}}</a>
+      </span>
+      <span ng-if='!match.participants[1] && match.outcome.winner'><a href='/#/team/{{match.participants[0]._id}}'>{{match.participants[0].name}}</a> (Bye)</span>
+    </h3>
+    
+    <h3>Outcome</h3>
+    <div id="outcome">
+      <table class="table table-striped table-bordered" style="width: 50%">
+        <tr>
+          <td class="col-sm-1">Winner: </td>
+          <td class="col-sm-1">{{winner.name}}</td>
+        </tr>
+        <tr>
+          <td>Loser: </td>
+          <td>{{loser.name}}</td>
+        </tr>
+        <tr ng-repeat="data in match.outcome.metadata">
+          <div ng-if="!data.value.hasOwnProperty('match')">
+              <td>{{data.name}}:</td>
+              <td ng-if="!data.value.hasOwnProperty('match')">{{winner.name}}: {{data.value.winner}}</br>{{loser.name}}: {{data.value.loser}}</td>
+              <td ng-if="data.value.hasOwnProperty('match')">{{data.value.match}}</td>
+        </tr>
+      </table>
+    </div>
+
+
+    <button class='btn btn-default' id='report-results' ng-click="toggleModal()" ng-show="!played && (user._id.toString() === match.participants[0].captain.toString() || user._id.toString() === match.participants[1].captain.toString()) && (match.participants[0] && match.participants[1])">Report Results</button>
+
+      <button class='btn btn-default' id='enter-results' ng-click="toggleApproveModal()" ng-show="!played && (user._id.toString() === tournament.admin.toString()) && (match.participants[0] && match.participants[1])">Approve Results</button>
+
+    <div class="overlay" ng-show="showModal">
+        <center class="modal">
+          <h3>Match Outcome</h3>
+            <p>Who Won?
+              <select ng-model="outcome_winner" ng-options="team.name for team in match.participants" required></select>
+            </p>
+            <div ng-repeat="field in tournament.statfields">
+              <div ng-if="field.teamSpecific">
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">
+                              Winner's {{field.name}}:
+                          </label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <input class="pull-left" ng-model="field.value.winner" type="number" required>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">
+                              Loser's {{field.name}}:
+                          </label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <input class="pull-left" ng-model="field.value.loser" type="number" required>
+                      </div>
+                  </div>
+              </div>
+              <div ng-if="!field.teamSpecific">
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">{{field.name}}: </label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <input class="pull-left" ng-model="field.value.match" type="number" required>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+            <button class='btn btn-default' ng-click="reportMatchOutcome()">Report Outcome</button>
+            <button class='btn btn-default' ng-click="toggleModal()">Close</button></br>
+            <span class="error">{{outcomeError}}</span>
+        </center>
+    </div>
+
+      <div class="overlay" ng-show="showApproveModal">
+        <center class="modal">
+          <div ng-if='match.preliminaryOutcomes[0].winner'>
+          <h3 ng-if='match.preliminaryOutcomes[0].reportedBy == match.participants[0]._id'>{{match.participants[0].name}}'s Reported Outcome</h3>
+          <h3 ng-if='match.preliminaryOutcomes[0].reportedBy == match.participants[1]._id'>{{match.participants[1].name}}'s Reported Outcome</h3>
+            <p>Winner: 
+              <span ng-if='match.preliminaryOutcomes[0].winner == match.participants[0]._id'>{{match.participants[0].name}}</span>
+              <span ng-if='match.preliminaryOutcomes[0].winner == match.participants[1]._id'>{{match.participants[1].name}}</span>
+            </p>
+            <div ng-repeat="field in match.preliminaryOutcomes[0].metadata">
+                <div ng-if="!field.value.hasOwnProperty('match')">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6">
+                            <label class="pull-right">Winner's {{field.name}}:</label>
+                        </div>
+                        <div class="col-md-6 col-xs-6">
+                            <span class="pull-left">{{field.value.winner}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6">
+                            <label class="pull-right">Loser's {{field.name}}:</label>
+                        </div>
+                        <div class="col-md-6 col-xs-6">
+                            <span class="pull-left">{{field.value.loser}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="field.value.hasOwnProperty('match')">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6">
+                            <label class="pull-right">{{field.name}}:</label>
+                        </div>
+                        <div class="col-md-6 col-xs-6">
+                            <span class="pull-left">{{field.value.match}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div ng-if='!match.preliminaryOutcomes[0].winner'><h3>Not reported.</h3></div>
+
+          <div ng-if='match.preliminaryOutcomes[1].winner'>
+          <h3 ng-if='match.preliminaryOutcomes[1].reportedBy == match.participants[0]._id'>{{match.participants[0].name}}'s Reported Outcome</h3>
+          <h3 ng-if='match.preliminaryOutcomes[1].reportedBy == match.participants[1]._id'>{{match.participants[1].name}}'s Reported Outcome</h3>
+            <p>Winner:
+              <span ng-if='match.preliminaryOutcomes[1].winner == match.participants[0]._id'>{{match.participants[0].name}}</span>
+              <span ng-if='match.preliminaryOutcomes[1].winner == match.participants[1]._id'>{{match.participants[1].name}}</span>
+            </p>
+            <div ng-repeat="field in match.preliminaryOutcomes[1].metadata">
+              <div ng-if="!field.value.hasOwnProperty('match')">
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">Winner's {{field.name}}:</label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <span class="pull-left">{{field.value.winner}}</span>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">Loser's {{field.name}}:</label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <span class="pull-left">{{field.value.loser}}</span>
+                      </div>
+                  </div>
+              </div>
+              <div ng-if="field.value.hasOwnProperty('match')">
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">{{field.name}}:</label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <span class="pull-left">{{field.value.match}}</span>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div ng-if='!match.preliminaryOutcomes[1].winner'><h3>Not reported.</h3></div>
+          <h3>Match Outcome</h3>
+            <p>Who Won?
+              <select ng-model="outcome_winner" ng-options="team.name for team in match.participants" required></select>
+            </p>
+            <div ng-repeat="field in tournament.statfields">
+              <div ng-if="field.teamSpecific">
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">Winner's {{field.name}}:</label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <input class="pull-left" ng-model="metadata[field.name].winner" type="number" required>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">Loser's {{field.name}}:</label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <input class="pull-left" ng-model="metadata[field.name].loser" type="number" required>
+                      </div>
+                  </div>
+              </div>
+              <div ng-if="!field.teamSpecific">
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                          <label class="pull-right">{{field.name}}:</label>
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                          <input class="pull-left" ng-model="metadata[field.name].match" type="number" required>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <button class='btn btn-default' ng-click="approveMatchOutcome()">Submit Outcome</button>
+            <button class='btn btn-default' ng-click="toggleApproveModal()">Close</button>
+            <span class="error">{{finalOutcomeError}}</span>
+        </center>
+    </div>
+  </div>
+</section>

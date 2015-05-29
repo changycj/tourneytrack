@@ -1,0 +1,23 @@
+﻿<section>
+    <div data-ng-include data-src="'angularviews/navbar.html'"></div>
+    <h2>Welcome to TourneyTrack</h2>
+    <span ng-show="showErrorMessage" class="error">{{message}}</span>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Login</h4>
+                <input type="text" ng-model="kerberoslogin" placeholder="Kerberos" /></br>
+                <input type="password" ng-model="passwordlogin" placeholder="Password" /></br>
+                <button class="btn btn-default " style="background-color:#00b1ff" ng-click="login(kerberoslogin, passwordlogin)">Login</button>
+            </div>
+            <div class="col-md-4">
+                <h4>Sign Up</h4>
+                <input type="text" ng-model="kerberossignup" placeholder="Kerberos"/></br>
+                <input type="password" ng-model="passwordsignup" placeholder="Password" /></br>
+                <input type="password" ng-model="confirmpassword" placeholder="Confirm Password" /></br>
+                <button class="btn btn-default" style="background-color:#00b1ff" ng-click="signup(kerberossignup, passwordsignup, confirmpassword)">Sign Up</button>
+            </div>
+        </div>
+    </div>
+    
+</section>

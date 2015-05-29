@@ -1,0 +1,55 @@
+﻿<section>
+    <div data-ng-include data-src="'angularviews/navbar.html'"></div>
+    <span class="error">{{error}}</span>
+    <div ng-show='error == undefined'>
+      <h3>{{team.name}}</h3>
+      <h4>Tournament: <a href='/#/tourney/{{team.tournament._id}}'>{{team.tournament.name}}</a></h4>
+      <h4>Captain: {{team.captain.username}}</h4>
+
+      <button ng-show='!team.tournament.started && !isAMember && user' ng-click='joinTeam()' class='btn btn-default'>Join</button> 
+      <button ng-show='!team.tournament.started && isAMember' class='btn btn-default' disabled>Joined</button> 
+
+      <button  ng-click='deleteTeam()' ng-show='!team.tournament.started && (user._id === team.captain._id || user._id === tournament.admin)' class='btn btn-default'>Delete</button>
+      
+      <h3>Members</h3>
+      <ol>
+          <li ng-repeat="member in team.members">
+              {{member.username}}
+          <button class="btn btn-default" ng-click="deleteMember(member._id)" ng-hide="user._id !== team.captain._id || team.tournament.started">&#9747</button>
+          </li>
+      </ol>
+
+      <h3>Upcoming Matches</h3>
+      <ol>
+          <li ng-repeat="u_match in upcomingMatches">
+              {{u_match.participants[0].name}} vs. {{u_match.participants[1].name}} <a href='/#/match/{{u_match._id}}'>View</a>
+          </li>
+      </ol>
+
+      <h3>Played Matches</h3>
+      <ol>
+          <li ng-repeat="match in playedMatches">
+              <span ng-if="match.participants[1]">{{match.participants[0].name}} vs. {{match.participants[1].name}}
+              </span>
+              <span ng-if="!match.participants[1]">Bye</span>
+              <a href='/#/match/{{match._id}}'>View</a>
+          </li>
+      </ol>
+
+      <h3>Team Stats</h3>
+      <table class="table table-bordered">
+          <tr>
+              <th>GP</th>
+              <th>Wins</th>
+              <th>Losses</th>
+              <th ng-repeat="field in statfields">{{field.name}}</th>
+          </tr>
+          <tr>
+              <td>{{playedMatches.length}}</td>
+              <td>{{wins}}</td>
+              <td>{{losses}}</td>
+              <td ng-repeat="field in statfields">{{stats[field.name]}}</td>
+          </tr>
+      </table>
+    </div>
+</section>

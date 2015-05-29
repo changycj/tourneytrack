@@ -1,0 +1,88 @@
+﻿<section>
+    <div data-ng-include data-src="'angularviews/navbar.html'"></div>
+    <span class='error'>{{error}}</span>
+    <div ng-show='error == undefined'>
+      <div class='tournament-info'>
+          <h3 class='tournament-name'>{{tournament.name}}</h3>
+          <h4 class='sub-text'> administered by:  <span>{{tournament.admin.username}}</span> </h4>
+          <div id='edit-tournament-wrapper'>
+              <button ng-show='isAdmin' class='btn btn-default' ng-click="toggleEditModal()">Edit Description</button>
+              <button ng-show='isAdmin' class='btn btn-danger' ng-click="deleteTourney()">Delete</button>
+          </div>
+      </div>
+
+
+          <h4 class='tournament-name'>Tournament Description: </h4>
+      <div class='tournament-description'>
+          <span ng-if='tournament.description'>{{tournament.description}}</span>
+          <span ng-if='!tournament.description'>None</span>
+      </div>
+
+      <div><button class='btn btn-default' ng-click="startTourney()" ng-hide="!isAdmin || tournament.started">Start Tournament</button></div>
+
+      <button class='btn btn-default' ng-click="toggleAddBracketModal()" ng-show="isAdmin && tournament.started">Add Bracket</button>
+
+      
+      <div id="visual_brackets" style="margin: 10px;">
+      </div>
+
+      <div class='tournament-brackets'>
+          <tr ng-repeat="bracket in brackets">
+               <td>
+                  {{bracket}} 
+              </td>
+          </tr>
+      </div>
+
+      <h4 class='participating-teams'>Participating Teams</h4>
+      <table>
+          <tr ng-repeat="team in teams">
+              <td>
+                  <a href='/#/team/{{team._id}}'>{{team.name}}</a>
+              </td>
+          </tr>
+      </table>
+
+      <button class='btn btn-default' ng-click="toggleAddTeamModal()" ng-hide="!user || tournament.started">Add Team</button>
+
+
+      <div class="overlay" ng-show="showAddTeamModal">
+        <center class="modal">
+          <h3>Add Team</h3>
+            <p>Team Name: <input type='text' ng-model='add_team_name'></p>
+            <button class='btn btn-default' ng-click="addTeam(add_team_name)">Add Team</button>
+            <button class='btn btn-default' ng-click="toggleAddTeamModal()">Close</button><br />
+            <span class="error">{{addTeamError}}</span>
+        </center>
+      </div>
+
+      <div class="overlay" ng-show="showAddBracketModal">
+        <center class="modal">
+          <h3>Add Bracket</h3>
+            <p>Bracket Name: <input type='text' ng-model='add_bracket_name'></p>
+            <p>Type: <select ng-model='add_bracket_type'>
+              <option value='Elimination'>Elimination</option>
+              <option value='Round Robin'>Round Robin</option>
+            </select></p>
+            <p>Teams: <div ng-repeat='team in teams'>
+            <input type='checkbox' value='{{team.name}}' ng-model='team.selected'>{{team.name}}</br>
+            </div>
+            </br>
+            <button class='btn btn-default' ng-click="addBracket(add_bracket_type, add_bracket_name)">Add Bracket</button>
+            <button class='btn btn-default' ng-click="toggleAddBracketModal()">Close</button></br>
+            <span class="error">{{addBracketError}}</span>
+        </center>
+      </div>
+
+      <div class="overlay" ng-show="showEditModal">
+        <center class="modal">
+          <h3>New Tournament Description</h3>
+            <p>Tournament Description:</p>
+            <p><textarea ng-model="description"></textarea></p>
+            <button class='btn btn-default' ng-click="editTourney(description)">Submit Description</button>
+            <button class='btn btn-default' ng-click="toggleEditModal()">Close</button></br>
+            <span class="error">{{editError}}</span>
+        </center>
+      </div>
+    </div>
+</section>
